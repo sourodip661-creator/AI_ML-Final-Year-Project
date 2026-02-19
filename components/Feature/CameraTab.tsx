@@ -1,10 +1,21 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
-import { CameraView } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
+import { CameraView } from "expo-camera";
+import React, { useState } from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useCamera } from "../../hooks/useCamera";
-import { colors, spacing, radii } from "../../lib/theme";
 import { ZOOM_LEVELS } from "../../lib/constants";
+import { colors, radii, spacing } from "../../lib/theme";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// Camera occupies ~50% of screen height — leaves room for header + tab switcher + controls
+const CAMERA_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface CameraTabProps {
   onShowSnapTips: () => void;
@@ -33,7 +44,6 @@ export default function CameraTab({ onShowSnapTips }: CameraTabProps) {
     const uri = await capturePhoto(zoom);
     if (uri) {
       console.log("Photo captured:", uri);
-      // Handle the captured photo (e.g., send to recognition API)
     }
   };
 
@@ -41,13 +51,12 @@ export default function CameraTab({ onShowSnapTips }: CameraTabProps) {
     const uri = await pickImage();
     if (uri) {
       console.log("Image selected:", uri);
-      // Handle the selected image
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Camera View */}
+      {/* Camera View — fixed height, not flex: 1 */}
       <View style={styles.cameraContainer}>
         <CameraView
           ref={cameraRef}
@@ -57,7 +66,7 @@ export default function CameraTab({ onShowSnapTips }: CameraTabProps) {
         />
       </View>
 
-      {/* Controls */}
+      {/* Controls — always visible below camera */}
       <View style={styles.controls}>
         {/* Zoom Controls */}
         <View style={styles.zoomContainer}>
@@ -90,13 +99,16 @@ export default function CameraTab({ onShowSnapTips }: CameraTabProps) {
             onPress={handleGalleryPress}
           >
             <View style={styles.iconBox}>
-              <Ionicons name="images-outline" size={24} color={colors.text} />
+              <Ionicons name="images-outline" size={22} color={colors.text} />
             </View>
             <Text style={styles.actionLabel}>Gallery</Text>
           </TouchableOpacity>
 
           {/* Capture Button */}
-          <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
+          <TouchableOpacity
+            style={styles.captureButton}
+            onPress={handleCapture}
+          >
             <View style={styles.captureButtonInner} />
           </TouchableOpacity>
 
@@ -108,7 +120,7 @@ export default function CameraTab({ onShowSnapTips }: CameraTabProps) {
             <View style={styles.iconBox}>
               <Ionicons
                 name="help-circle-outline"
-                size={24}
+                size={22}
                 color={colors.text}
               />
             </View>
@@ -126,8 +138,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   cameraContainer: {
-    flex: 1,
+    height: CAMERA_HEIGHT,
     backgroundColor: "#000",
+    overflow: "hidden",
   },
   camera: {
     flex: 1,
@@ -140,18 +153,19 @@ const styles = StyleSheet.create({
   },
   controls: {
     backgroundColor: colors.background,
-    paddingVertical: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
     paddingHorizontal: spacing.md,
   },
   zoomContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: spacing.lg,
-    marginBottom: spacing.xl,
+    gap: spacing.md,
+    marginBottom: spacing.lg,
   },
   zoomButton: {
-    width: 50,
-    height: 50,
+    width: 44,
+    height: 44,
     borderRadius: radii.round,
     backgroundColor: colors.surfaceVariant,
     justifyContent: "center",
@@ -161,7 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   zoomText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "500",
     color: colors.text,
   },
@@ -175,11 +189,11 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   iconBox: {
-    width: 50,
-    height: 50,
+    width: 46,
+    height: 46,
     borderWidth: 2,
     borderColor: colors.outline,
     borderRadius: radii.md,
@@ -187,12 +201,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionLabel: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
   },
   captureButton: {
-    width: 80,
-    height: 80,
+    width: 72,
+    height: 72,
     borderRadius: radii.round,
     backgroundColor: colors.primary,
     borderWidth: 4,
