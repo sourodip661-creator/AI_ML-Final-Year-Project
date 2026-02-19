@@ -1,9 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 import { colors, radii, spacing } from "../../lib/theme";
 import { formatTime } from "../../utils/formatters";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const COMPONENT_HEIGHT = SCREEN_HEIGHT * 0.8;
 
 export default function SoundTab() {
   const {
@@ -19,7 +28,6 @@ export default function SoundTab() {
       const uri = await stopRecording();
       if (uri) {
         console.log("Recording saved:", uri);
-        // Handle the recorded audio
       }
     } else {
       await startRecording();
@@ -30,24 +38,21 @@ export default function SoundTab() {
     const uri = await pickAudio();
     if (uri) {
       console.log("Audio file selected:", uri);
-      // Handle the selected audio
     }
   };
-  // Bharatiya Pakshi Sahayak Phechan
-
-  // Random Forest
 
   return (
-    <View style={styles.container}>
-      {/* Recording Area */}
-      <View style={styles.recordingArea}>
-        {/* Timer */}
-        <View style={styles.timerContainer}>
-          <Text style={styles.timerText}>{formatTime(recordingTime)}</Text>
-        </View>
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
+        {/* Green top decorative area */}
+        <View style={styles.greenArea} />
 
-        {/* Record Button */}
-        <View style={styles.recordButtonContainer}>
+        {/* Controls */}
+        <View style={styles.controls}>
+          {/* Timer */}
+          <Text style={styles.timerText}>{formatTime(recordingTime)}</Text>
+
+          {/* Record Button */}
           <TouchableOpacity
             style={[
               styles.recordButton,
@@ -62,17 +67,13 @@ export default function SoundTab() {
               ]}
             />
           </TouchableOpacity>
-        </View>
 
-        {/* Instructions */}
-        <View style={styles.instructionsContainer}>
+          {/* Instructions */}
           <Text style={styles.instructionsText}>
             Tap the button above to start recording or upload your sound
           </Text>
-        </View>
 
-        {/* Add Sound Button */}
-        <View style={styles.addSoundContainer}>
+          {/* Add Sound Button */}
           <TouchableOpacity
             style={styles.addSoundButton}
             onPress={handleAddSound}
@@ -87,35 +88,37 @@ export default function SoundTab() {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    height: COMPONENT_HEIGHT - 50,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  greenArea: {
+    flex: 6,
     backgroundColor: "#F0F4E8",
   },
-  recordingArea: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.xxxl,
-  },
-  timerContainer: {
+  controls: {
+    flex: 6,
     alignItems: "center",
-    marginBottom: spacing.xxl,
+    justifyContent: "space-evenly",
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.background,
   },
   timerText: {
-    fontSize: 48,
-    fontWeight: "400",
+    fontSize: 24,
+    fontWeight: "500",
     color: colors.text,
     letterSpacing: 2,
   },
-  recordButtonContainer: {
-    alignItems: "center",
-    marginBottom: spacing.xl,
-  },
   recordButton: {
-    width: 90,
-    height: 90,
+    width: 70,
+    height: 70,
     borderRadius: radii.round,
-    borderWidth: 5,
+    borderWidth: 4,
     borderColor: colors.outline,
     backgroundColor: colors.background,
     justifyContent: "center",
@@ -125,30 +128,23 @@ const styles = StyleSheet.create({
     borderColor: "#FF5252",
   },
   recordButtonInner: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: radii.round,
     backgroundColor: "#FF6B6B",
   },
   recordButtonInnerActive: {
     backgroundColor: "#FF5252",
   },
-  instructionsContainer: {
-    alignItems: "center",
-    marginBottom: spacing.xxl,
-  },
   instructionsText: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textSecondary,
     textAlign: "center",
-    lineHeight: 20,
-  },
-  addSoundContainer: {
-    alignItems: "center",
+    lineHeight: 19,
   },
   addSoundButton: {
     backgroundColor: colors.primary,
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.md,
     paddingHorizontal: spacing.xxxl,
     borderRadius: radii.md,
     flexDirection: "row",
@@ -156,7 +152,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   addSoundText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "500",
     color: colors.textOnPrimary,
   },
