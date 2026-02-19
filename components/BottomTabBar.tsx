@@ -73,7 +73,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: any) {
 
         {/* Collections Tab */}
         <TouchableOpacity
-          onPress={() => navigation.navigate("collection")}
+          onPress={() => router.replace("/collection")}
           style={styles.tabItem}
         >
           <View style={styles.iconContainer}>

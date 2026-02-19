@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -16,8 +16,22 @@ import { colors, radii, spacing } from "../lib/theme";
 type TabType = "camera" | "sound";
 
 export default function ScanScreen() {
-  const [activeTab, setActiveTab] = useState<TabType>("camera");
-  const navigation = useNavigation();
+  const { tab } = useLocalSearchParams<{ tab: TabType }>();
+  const [activeTab, setActiveTab] = useState<TabType>(tab ?? "camera");
+  const router = useRouter();
+
+  // Sync state when route param changes (e.g. navigating from FeatureSection)
+  useEffect(() => {
+    if (tab === "sound" || tab === "camera") {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
+  // Update both local state AND the URL param so router stays in sync
+  const handleTabChange = (newTab: TabType) => {
+    setActiveTab(newTab);
+    router.setParams({ tab: newTab });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -27,7 +41,7 @@ export default function ScanScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => router.back()}
         >
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
@@ -46,7 +60,7 @@ export default function ScanScreen() {
               styles.tabButton,
               activeTab === "sound" && styles.tabButtonActive,
             ]}
-            onPress={() => setActiveTab("sound")}
+            onPress={() => handleTabChange("sound")}
             activeOpacity={0.8}
           >
             <Text
@@ -64,7 +78,7 @@ export default function ScanScreen() {
               styles.tabButton,
               activeTab === "camera" && styles.tabButtonActive,
             ]}
-            onPress={() => setActiveTab("camera")}
+            onPress={() => handleTabChange("camera")}
             activeOpacity={0.8}
           >
             <Text
@@ -137,7 +151,6 @@ const styles = StyleSheet.create({
   },
   tabButtonActive: {
     backgroundColor: colors.background,
-    // Subtle shadow for the active pill
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,

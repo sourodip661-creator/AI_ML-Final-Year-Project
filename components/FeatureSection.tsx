@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, radii, spacing } from "../lib/theme";
@@ -11,6 +12,18 @@ export default function FeatureSection({
   onPhotoPress,
   onSoundPress,
 }: FeatureSectionProps) {
+  const router = useRouter();
+
+  const handlePhotoPress = () => {
+    onPhotoPress?.();
+    router.push({ pathname: "/scan", params: { tab: "camera" } });
+  };
+
+  const handleSoundPress = () => {
+    onSoundPress?.();
+    router.push({ pathname: "/scan", params: { tab: "sound" } });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -19,7 +32,7 @@ export default function FeatureSection({
 
       <View style={styles.featuresRow}>
         {/* Photo identification */}
-        <TouchableOpacity style={styles.featureCard} onPress={onPhotoPress}>
+        <TouchableOpacity style={styles.featureCard} onPress={handlePhotoPress}>
           <View style={styles.iconContainer}>
             <Image
               source={require("../assets/project/camera.png")}
@@ -33,7 +46,7 @@ export default function FeatureSection({
         <View style={styles.divider} />
 
         {/* Sound identification */}
-        <TouchableOpacity style={styles.featureCard} onPress={onSoundPress}>
+        <TouchableOpacity style={styles.featureCard} onPress={handleSoundPress}>
           <View style={styles.iconContainer}>
             <Image
               source={require("../assets/project/microphone.png")}
